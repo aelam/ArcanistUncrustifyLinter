@@ -10,11 +10,12 @@ final class ArcanistUncrustifyLinter extends ArcanistExternalLinter {
   }
 
   public function getInfoURI() {
-    return '';
+    return 'http://uncrustify.sourceforge.net/';
   }
 
   public function getInfoDescription() {
-    return pht('Use Uncrustify for processing specified files.');
+    return pht(
+      'A tool to format C/C++/Java/Objective-C/Embedded SQL code.');
   }
 
   public function getLinterName() {
@@ -34,6 +35,20 @@ final class ArcanistUncrustifyLinter extends ArcanistExternalLinter {
 
   public function getDefaultBinary() {
     return 'uncrustify';
+  }
+
+  public function getVersion() {
+    /* Copied parsing code from 
+     * https://github.com/pwithnall/morefas-phabricator/blob/master/lint/linter/FnClangFormatLinter.php */
+    list($stdout) = execx('%C --version', $this->getExecutableCommand());
+
+    $matches = array();
+    $regex = '/^uncrustify (?P<version>[0-9]*\.*?[0-9]+)/';
+    if (preg_match($regex, $stdout, $matches)) {
+      return $matches['version'];
+    } else {
+      return false;
+    }
   }
 
   public function getInstallInstructions() {
